@@ -237,7 +237,7 @@ export function getStorageUsage(): StorageUsage {
   const TOTAL_LIMIT = 5 * 1024 * 1024; // 5MB in bytes
   let used = 0;
 
-  for (let key in localStorage) {
+  for (const key in localStorage) {
     if (key.startsWith('geoquiz_')) {
       used += localStorage[key].length * 2; // UTF-16 = 2 bytes per char
     }

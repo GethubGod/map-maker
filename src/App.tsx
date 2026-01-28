@@ -3,20 +3,31 @@ import { useEffect } from 'react';
 import HomePage from './pages/HomePage';
 import LibraryPage from './pages/LibraryPage';
 import QuizPage from './pages/QuizPage';
+import NorthAmericaQuizPage from './pages/NorthAmericaQuizPage';
 import EditorPage from './pages/EditorPage';
 import ResultsPage from './pages/ResultsPage';
-import { initializeStorage } from './services/storageService';
+import { initializeStorage, saveMap, saveQuiz, getAllMaps } from './services/storageService';
+import { sampleMaps, sampleQuizzes } from './constants/sampleMaps';
 
 function App() {
   useEffect(() => {
     // Initialize localStorage on app mount
     initializeStorage();
+
+    // Load sample data if no maps exist
+    const existingMaps = getAllMaps();
+    if (Object.keys(existingMaps).length === 0) {
+      sampleMaps.forEach((map) => saveMap(map));
+      sampleQuizzes.forEach((quiz) => saveQuiz(quiz));
+      console.log('Loaded sample maps and quizzes');
+    }
   }, []);
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/north-america" element={<NorthAmericaQuizPage />} />
         <Route path="/library" element={<LibraryPage />} />
         <Route path="/quiz" element={<QuizPage />} />
         <Route path="/quiz/:quizId" element={<QuizPage />} />

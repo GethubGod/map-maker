@@ -22,7 +22,17 @@ export default function QuizCanvas({
 }: QuizCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
+  const onPinPlacedRef = useRef(onPinPlaced);
+  const disabledRef = useRef(disabled);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    onPinPlacedRef.current = onPinPlaced;
+  }, [onPinPlaced]);
+
+  useEffect(() => {
+    disabledRef.current = disabled;
+  }, [disabled]);
 
   // Initialize Fabric.js canvas
   useEffect(() => {
@@ -60,7 +70,7 @@ export default function QuizCanvas({
 
     // Handle canvas clicks
     canvas.on('mouse:down', (event) => {
-      if (disabled || !event.pointer) return;
+      if (disabledRef.current || !event.pointer) return;
 
       const pointer = event.pointer;
       const normalizedPoint = normalizePoint(
@@ -69,7 +79,7 @@ export default function QuizCanvas({
         canvas.height!
       );
 
-      onPinPlaced(normalizedPoint);
+      onPinPlacedRef.current(normalizedPoint);
 
       // Add pin marker
       addPinMarker(canvas, pointer.x, pointer.y);
@@ -78,7 +88,7 @@ export default function QuizCanvas({
     return () => {
       canvas.dispose();
     };
-  }, [map.imageData, disabled]);
+  }, [map.imageData]);
 
   // Show feedback when answer is checked
   useEffect(() => {
